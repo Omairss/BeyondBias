@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import pdb
 import pickle as pkl
 import json
 import codecs
@@ -82,6 +83,7 @@ def Classification(corpus, features, task):
     # placeholders to accumulate true and predicted labels
     y_true = []
     y_pred = []
+
     # start cross-validation
     for i in range(5):
         print('fold ' + str(i))
