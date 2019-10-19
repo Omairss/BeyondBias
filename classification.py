@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import pickle as pkl
 import json
 import codecs
 import argparse
@@ -57,19 +58,18 @@ def GetFeaturesAndLabels(corpus, features, task):
     labels['fact'] = {'low': 0, 'mixed': 1, 'high': 2}
     labels['bias'] = {'extreme-right': 0, 'right': 1, 'right-center': 2, 'center': 3, 'left-center': 4, 'left': 5, 'extreme-left': 6}
     data = pd.read_csv('data/corpus.csv')
-    
-    print(bias)
-    break
 
     if task in labels.keys():
         y = data[task]
         y = [labels[task][L.lower()] for L in y]
+    
     elif task == 'bias3way':
         y = data['bias']
         y = [labels['bias'][L.lower()] for L in y]
         y = [0 if L in [0, 1] else 1 if L in [2, 3, 4] else 2 for L in y]
     else:
-        raise ValueError('Task Unrecognised')
+        raise ValueError('Task variable has [' + str(task) +
+                         '] but expected either [' + labels.keys() + ' or bias3way]')
 
     y = pd.DataFrame(np.asarray(y).reshape(-1, 1))
     return X, y
@@ -104,6 +104,9 @@ def Classification(corpus, features, task):
         # build final model for current fold using best parameters
         CLF_fold = SVC(kernel=CLF.best_estimator_.kernel, gamma=CLF.best_estimator_.gamma, C=CLF.best_estimator_.C, probability=True)
         CLF_fold.fit(Xtr, ytr.reshape(-1,))
+        #Save the model to pickle file
+        with open('models/' + ':'.join(features) + '_' + str(task) + '.pkl', 'wb') as f:
+            pkl.dump(CLF_fold, f)
         # preform prediction on test data
         yhat = CLF_fold.predict(Xts)
         y_true.extend(yts)
