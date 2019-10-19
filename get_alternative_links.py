@@ -73,7 +73,6 @@ def parse_params():
 
 def main():
 
-    url           = 'http://fox13now.com/2013/12/30/new-year-new-laws-obamacare-pot-guns-and-drones/'
     
     user_params = parse_params()
     url         = user_params.url
@@ -92,12 +91,34 @@ def main():
     
     search_results_df.to_csv('results/search_results.csv')
 
-    return search_results_df
-    #return search_results_df[~search_results_df['bias'].str.replace('-', ' ').str.contains(url_bias)]
+    return search_results_df.to_dict(orient = 'index')
+
+
+def get_alternative_links(url):
+
+    
+    user_params = parse_params()
+    url         = user_params.url
+    corpus      = pd.read_csv('data/corpus.csv')
+
+    url_bias      = get_url_bias(url, corpus)
+    url_fact      = get_url_fact(url, corpus)
+    
+    query         = get_search_query(url)
+    query_results_df = get_query_results(query)
+    query_results_df = query_results_df.fillna('')
+
+
+    search_results_df = pd.merge(corpus, query_results_df, left_on = 'source_url_processed', right_on = 'domain')
+    search_results_df = search_results_df[~search_results_df['bias'].str.replace('-', ' ').str.contains('right')]
+    
+
+    return search_results_df.to_dict(orient = 'index')
 
 
 
 if __name__ == '__main__':
 
     main()
+
 
