@@ -45,7 +45,7 @@ def GetFeaturesAndLabels(corpus, features, task):
     X = np.empty(data.shape[0]).reshape(-1, 1)
     for file in [f for f in os.listdir('data/features/') if '.npy' in f]:
         if file.replace('.npy', '') in features:
-            feats = pd.DataFrame(np.load('data/features/' + file))
+            feats = pd.DataFrame(np.load('data/features/' + file, allow_pickle = True))
             feats = feats[feats.iloc[:, 0].isin(sources)].as_matrix()
             feats = np.delete(feats, 0, axis=1).astype(float)
             X = np.hstack([X, feats[:, :-2]])
@@ -57,6 +57,10 @@ def GetFeaturesAndLabels(corpus, features, task):
     labels['fact'] = {'low': 0, 'mixed': 1, 'high': 2}
     labels['bias'] = {'extreme-right': 0, 'right': 1, 'right-center': 2, 'center': 3, 'left-center': 4, 'left': 5, 'extreme-left': 6}
     data = pd.read_csv('data/corpus.csv')
+    
+    print(bias)
+    break
+
     if task in labels.keys():
         y = data[task]
         y = [labels[task][L.lower()] for L in y]
@@ -64,6 +68,9 @@ def GetFeaturesAndLabels(corpus, features, task):
         y = data['bias']
         y = [labels['bias'][L.lower()] for L in y]
         y = [0 if L in [0, 1] else 1 if L in [2, 3, 4] else 2 for L in y]
+    else:
+        raise ValueError('Task Unrecognised')
+
     y = pd.DataFrame(np.asarray(y).reshape(-1, 1))
     return X, y
 
