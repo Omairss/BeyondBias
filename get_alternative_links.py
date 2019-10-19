@@ -96,9 +96,6 @@ def main():
 
 def get_alternative_links(url):
 
-    
-    user_params = parse_params()
-    url         = user_params.url
     corpus      = pd.read_csv('data/corpus.csv')
 
     url_bias      = get_url_bias(url, corpus)
