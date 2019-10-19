@@ -1,2 +1,2 @@
 # BeyondBias
-Tool to help users reduce bias
+Reimagine the news.
