@@ -1,7 +1,7 @@
 absl-py==0.8.0
 ansiwrap==0.8.4
 apache-beam==2.15.0
-arrow==0.14.7
+arrow==0.15.1
 astor==0.8.0
 attrs==19.1.0
 avro==1.9.1
